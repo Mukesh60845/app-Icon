@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Beautiful App Icon — Preview & Export</title>
+  <style>
+    :root{
+      --size: 320px; /* preview size */
+      --bg: radial-gradient(circle at 30% 30%, #ffd7b5 0%, #ffb199 30%, #ff7a7a 70%, #7b2cff 100%);
+      --card-radius: 48px;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(180deg,#0f1724 0%, #071124 100%);
+      color:#e6eef8;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      padding:32px;
+    }
+
+    .wrap{
+      display:grid;grid-template-columns: 1fr 360px;gap:28px;align-items:start;
+      max-width:980px;width:100%;
+    }
+
+    .preview-area{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:20px;padding:28px;box-shadow: 0 6px 30px rgba(2,6,23,0.7);
+      display:flex;flex-direction:column;gap:18px;align-items:center;justify-content:center;
+    }
+
+    .icon-stage{
+      width:var(--size);height:var(--size);border-radius:calc(var(--card-radius));
+      display:flex;align-items:center;justify-content:center;position:relative;
+      box-shadow: 0 20px 40px rgba(11,8,30,0.65);
+      transform: translateZ(0);
+    }
+
+    /* The icon itself (SVG inside) scales to fit */
+    .icon-stage svg{width:88%;height:88%;display:block;border-radius:inherit;overflow:visible}
+
+    /* controls */
+    .controls{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+    button, select{background:rgba(255,255,255,0.06);color:inherit;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;cursor:pointer}
+    button:hover, select:hover{transform:translateY(-2px)}
+
+    .panel{
+      padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: 0 10px 30px rgba(2,6,23,0.55);
+    }
+    .panel h3{margin:0 0 10px 0;font-size:16px}
+    .palettes{display:flex;gap:8px;flex-wrap:wrap}
+    .swatch{width:44px;height:44px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .swatch span{font-size:11px;opacity:0.85}
+
+    .notes{font-size:13px;opacity:0.9;line-height:1.4}
+
+    footer{font-size:12px;color:rgba(230,238,248,0.6);margin-top:12px}
+
+    /* small screens */
+    @media (max-width:900px){.wrap{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="preview-area panel">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#ffffff12,#00000012);display:flex;align-items:center;justify-content:center;font-weight:700">Icon</div>
+        <div>
+          <div style="font-size:18px;font-weight:700">Beautiful App Icon — Live Preview</div>
+          <div style="font-size:13px;opacity:0.85">Scalable SVG icon inside a rounded square. Use the controls to change mood and export.</div>
+        </div>
+      </div>
+
+      <div class="icon-stage" id="iconStage">
+        <!-- ICON (SVG) - layered shapes, soft glass & subtle bevel -->
+        <svg id="iconSVG" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- background rounded rect with gradient fill and texture -->
+          <defs>
+            <linearGradient id="bgGrad" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#ffb199" />
+              <stop offset="50%" stop-color="#ff6bcb" />
+              <stop offset="100%" stop-color="#7b2cff" />
+            </linearGradient>
+            <radialGradient id="glow" cx="30%" cy="25%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45" />
+              <stop offset="65%" stop-color="#ffffff" stop-opacity="0.02" />
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+            </radialGradient>
+            <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="8" stdDeviation="18" flood-color="#000" flood-opacity="0.45" />
+            </filter>
+            <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feBlend in="SourceGraphic" in2="blur" mode="screen" />
+            </filter>
+            <!-- subtle noise pattern -->
+            <pattern id="grain" patternUnits="userSpaceOnUse" width="4" height="4">
+              <rect width="4" height="4" fill="rgba(255,255,255,0)" />
+              <path d="M0 0 L4 4 M4 0 L0 4" stroke-opacity="0.03" stroke="#000" stroke-width="0.5"/>
+            </pattern>
+          </defs>
+
+          <!-- rounded square base -->
+          <rect x="6" y="6" rx="28" ry="28" width="188" height="188" fill="url(#bgGrad)" filter="url(#softShadow)"/>
+
+          <!-- abstract folded shape in the center (symbol) -->
+          <g transform="translate(36,36) scale(0.65)" id="symbol">
+            <path id="s1" d="M40 6 C66 -6 98 6 100 38 C102 70 76 98 48 110 C20 122 2 110 2 82 C2 54 14 18 40 6 Z" fill="rgba(255,255,255,0.14)"/>
+            <path id="s2" d="M28 30 C50 10 88 20 94 46 C100 72 76 98 56 106 C36 114 18 106 18 86 C18 66 22 50 28 30 Z" fill="rgba(0,0,0,0.12)" transform="translate(6,6) rotate(-6 60 60)"/>
+            <path id="s3" d="M14 64 C36 42 76 36 96 60 C116 84 92 118 68 126 C44 134 18 122 14 98 C10 74 10 70 14 64 Z" fill="url(#symbolGrad)"/>
+          </g>
+
+          <!-- gloss / highlight -->
+          <ellipse cx="60" cy="44" rx="62" ry="30" fill="url(#glow)" opacity="0.55" />
+
+          <!-- top glass shine -->
+          <path d="M20 32 C40 10 160 8 180 36 L180 26 C160 0 40 2 20 28 Z" fill="rgba(255,255,255,0.12)"/>
+
+          <!-- small rim highlight -->
+          <rect x="8" y="8" rx="28" ry="28" width="184" height="184" fill="url(#grain)" opacity="0.6" />
+        </svg>
+      </div>
+
+      <div class="controls">
+        <select id="presetSelect">
+          <option value="sunset">Sunset Gradient</option>
+          <option value="ocean">Oceanic Blue</option>
+          <option value="aurora">Aurora Neon</option>
+          <option value="mint">Mint Fresh</option>
+          <option value="mono">Minimal Mono</option>
+        </select>
+        <button id="randomize">Randomize</button>
+        <button id="exportPNG">Download PNG (512px)</button>
+      </div>
+
+      <footer>Tip: press <strong>Randomize</strong> to explore moods, then download a 512×512 PNG for the app store.</footer>
+    </div>
+
+    <div class="panel">
+      <h3>Palettes & Notes</h3>
+      <div class="palettes" id="palettes">
+        <!-- swatches populated by JS -->
+      </div>
+      <hr style="border:none;height:12px;opacity:0">
+      <div class="notes">
+        This demo creates a highly-scalable SVG icon and places it in a rounded-square frame with subtle depth and gloss. The symbol is intentionally abstract so it reads clearly at small sizes. Use the export button to generate a 512×512 PNG suitable for app store submissions.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // -- palettes --
+    const palettes = {
+      sunset: ['#ffb199','#ff6bcb','#7b2cff'],
+      ocean: ['#7ad1ff','#3aa0ff','#0057d9'],
+      aurora: ['#00ffd1','#4a00ff','#ff00a8'],
+      mint: ['#c8ffd7','#6ce0b1','#2bb38a'],
+      mono: ['#ffffff','#d8dbe5','#0b1016']
+    };
+
+    const presetSelect = document.getElementById('presetSelect');
+    const iconSVG = document.getElementById('iconSVG');
+    const iconStage = document.getElementById('iconStage');
+    const palettesEl = document.getElementById('palettes');
+
+    function applyPalette(name){
+      const p = palettes[name];
+      // update the gradient stops
+      const stops = iconSVG.querySelectorAll('#bgGrad stop');
+      stops[0].setAttribute('stop-color', p[0]);
+      stops[1].setAttribute('stop-color', blend(p[1], p[0], 0.45));
+      stops[2].setAttribute('stop-color', p[2]);
+
+      // adjust glow opacity for contrast
+      const glow = iconSVG.querySelector('#glow stop');
+      glow.setAttribute('stop-color','#ffffff');
+
+      // tweak symbol fills (subtle)
+      const s1 = iconSVG.querySelector('#s1');
+      s1.setAttribute('fill', 'rgba(255,255,255,0.14)');
+      const s2 = iconSVG.querySelector('#s2');
+      s2.setAttribute('fill', 'rgba(0,0,0,0.12)');
+
+      renderSwatches(name);
+    }
+
+    function renderSwatches(active){
+      palettesEl.innerHTML='';
+      for(const k in palettes){
+        const sw = document.createElement('div');
+        sw.className='swatch';
+        sw.title = k;
+        sw.onclick = ()=>{presetSelect.value=k; applyPalette(k)};
+        const g = palettes[k];
+        sw.innerHTML = `<div style='width:100%;height:100%;border-radius:7px;background:linear-gradient(135deg, ${g[0]}, ${g[1]}, ${g[2]})'></div>`;
+        palettesEl.appendChild(sw);
+      }
+    }
+
+    // simple color blend (hex) helper
+    function blend(a,b,amount){
+      const ah = a.replace('#',''), bh = b.replace('#','');
+      const ar = parseInt(ah.substring(0,2),16), ag = parseInt(ah.substring(2,4),16), ab = parseInt(ah.substring(4,6),16);
+      const br = parseInt(bh.substring(0,2),16), bg_ = parseInt(bh.substring(2,4),16), bb = parseInt(bh.substring(4,6),16);
+      const rr = Math.round(ar + (br-ar)*amount).toString(16).padStart(2,'0');
+      const rg = Math.round(ag + (bg_-ag)*amount).toString(16).padStart(2,'0');
+      const rb = Math.round(ab + (bb-ab)*amount).toString(16).padStart(2,'0');
+      return `#${rr}${rg}${rb}`;
+    }
+
+    presetSelect.addEventListener('change', ()=>applyPalette(presetSelect.value));
+
+    document.getElementById('randomize').addEventListener('click', ()=>{
+      const keys = Object.keys(palettes);
+      const k = keys[Math.floor(Math.random()*keys.length)];
+      presetSelect.value = k; applyPalette(k);
+      // small random transform for the symbol
+      const sym = iconSVG.querySelector('#symbol');
+      const rx = (Math.random()*10)-5;
+      const ry = (Math.random()*10)-5;
+      sym.setAttribute('transform', `translate(36,36) scale(0.65) rotate(${rx})`);
+    });
+
+    // export function: render SVG to canvas and download PNG at requested size
+    document.getElementById('exportPNG').addEventListener('click', ()=>{
+      exportPNG(512);
+    });
+
+    function exportPNG(size){
+      // clone SVG and inline computed styles if needed
+      const svgEl = iconSVG.cloneNode(true);
+      svgEl.setAttribute('width', size);
+      svgEl.setAttribute('height', size);
+      svgEl.setAttribute('viewBox', '0 0 200 200');
+
+      // serialize
+      const serializer = new XMLSerializer();
+      const svgStr = serializer.serializeToString(svgEl);
+      const svgBlob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
+      const url = URL.createObjectURL(svgBlob);
+
+      const img = new Image();
+      img.onload = function(){
+        const canvas = document.createElement('canvas');
+        canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        // draw rounded mask background to preserve rounded-corner icon
+        ctx.clearRect(0,0,size,size);
+        // draw white transparent background to respect alpha
+        ctx.drawImage(img, 0, 0, size, size);
+        // create download
+        const link = document.createElement('a');
+        link.download = `app-icon-${size}x${size}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        URL.revokeObjectURL(url);
+      };
+      img.onerror = ()=>{alert('Export failed — browser may block SVG blob. Try a different browser.')};
+      img.src = url;
+    }
+
+    // initial setup
+    applyPalette('sunset');
+    renderSwatches('sunset');
+  </script>
+</body>
+</html>
